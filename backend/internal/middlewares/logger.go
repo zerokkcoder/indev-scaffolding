@@ -36,7 +36,7 @@ func Logger() gin.HandlerFunc {
 			"path", path,
 			"ip", c.ClientIP(),
 			"latency", latency,
-			"user-agent", c.Request.UserAgent(),
+			// "user-agent", c.Request.UserAgent(),
 		)
 		if len(errs) > 0 {
 			log = log.With("errors", errs)
