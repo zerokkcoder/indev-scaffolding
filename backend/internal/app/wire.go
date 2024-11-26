@@ -5,6 +5,8 @@ package app
 import (
 	"github.com/google/wire"
 	"github.com/zerokkcoder/indevsca/internal/app/handler"
+	"github.com/zerokkcoder/indevsca/internal/app/handler/admin"
+	"github.com/zerokkcoder/indevsca/internal/app/handler/mobile"
 	"github.com/zerokkcoder/indevsca/internal/domain/repository"
 	"github.com/zerokkcoder/indevsca/internal/domain/service"
 	"github.com/zerokkcoder/indevsca/internal/infra/config"
@@ -25,9 +27,17 @@ func InitializeApp() (*App, error) {
 
 		// 服务层
 		service.NewAuthService,
+		service.NewUserService,
 
-		// 处理器
-		handler.NewAuthHandler,
+		// 处理器 - 管理端
+		admin.NewAuthHandler,
+		admin.NewUserHandler,
+
+		// 处理器 - 移动端
+		mobile.NewAuthHandler,
+		mobile.NewUserHandler,
+
+		// 处理器集合
 		handler.NewHandlers,
 
 		// 应用

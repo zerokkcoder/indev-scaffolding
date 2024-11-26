@@ -8,6 +8,8 @@ package app
 
 import (
 	"github.com/zerokkcoder/indevsca/internal/app/handler"
+	"github.com/zerokkcoder/indevsca/internal/app/handler/admin"
+	"github.com/zerokkcoder/indevsca/internal/app/handler/mobile"
 	"github.com/zerokkcoder/indevsca/internal/domain/service"
 	"github.com/zerokkcoder/indevsca/internal/infra/config"
 	"github.com/zerokkcoder/indevsca/internal/infra/database"
@@ -28,8 +30,12 @@ func InitializeApp() (*App, error) {
 	}
 	userRepository := repository.NewUserRepository(databaseDatabase)
 	authService := service.NewAuthService(userRepository)
-	authHandler := handler.NewAuthHandler(authService)
-	handlers := handler.NewHandlers(authHandler)
+	authHandler := admin.NewAuthHandler(authService)
+	userService := service.NewUserService(userRepository)
+	userHandler := admin.NewUserHandler(userService)
+	mobileAuthHandler := mobile.NewAuthHandler(authService)
+	mobileUserHandler := mobile.NewUserHandler(userService)
+	handlers := handler.NewHandlers(authHandler, userHandler, mobileAuthHandler, mobileUserHandler)
 	app := NewApp(configConfig, handlers)
 	return app, nil
 }
