@@ -12,14 +12,14 @@ import (
 // AuthHandler 管理员认证处理器
 type AuthHandler struct {
 	authService *service.AuthService
-	db         *gorm.DB
+	db          *gorm.DB
 }
 
 // NewAuthHandler 创建管理员认证处理器
 func NewAuthHandler(authService *service.AuthService, db *gorm.DB) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
-		db:         db,
+		db:          db,
 	}
 }
 
@@ -30,45 +30,48 @@ type LoginRequest struct {
 }
 
 // Login 管理员登录
-func (h *AuthHandler) Login() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var req LoginRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
-			response.Error(c, response.ErrInvalidParams)
-			return
-		}
+func (h *AuthHandler) Login(c *gin.Context) {
+	var req LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Error(c, response.ErrInvalidParams)
+		return
+	}
 
-		var admin entity.Admin
-		if err := h.db.Where("username = ?", req.Username).First(&admin).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				response.Error(c, response.ErrInvalidCredentials)
-				return
-			}
-			response.Error(c, err)
-			return
-		}
-
-		// 验证密码
-		if !utils.CheckPasswordHash(req.Password, admin.Password) {
+	var admin entity.Admin
+	if err := h.db.Where("username = ?", req.Username).First(&admin).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
 			response.Error(c, response.ErrInvalidCredentials)
 			return
 		}
-
-		// 生成JWT token
-		token, err := utils.GenerateToken(admin.ID)
-		if err != nil {
-			response.Error(c, err)
-			return
-		}
-
-		response.Success(c, gin.H{
-			"token": token,
-			"admin": admin,
-		})
+		response.Error(c, err)
+		return
 	}
+
+	// 验证密码
+	if !utils.CheckPasswordHash(req.Password, admin.Password) {
+		response.Error(c, response.ErrInvalidCredentials)
+		return
+	}
+
+	// 生成JWT token
+	token, err := utils.GenerateToken(admin.ID)
+	if err != nil {
+		response.Error(c, err)
+		return
+	}
+
+	response.Success(c, gin.H{
+		"token": token,
+		"admin": admin,
+	})
 }
 
 // Logout 管理员登出
 func (h *AuthHandler) Logout(c *gin.Context) {
-	// 实现管理员登出逻辑
+	// 清除认证相关的 header
+	c.Header("Authorization", "")
+
+	response.Success(c, gin.H{
+		"message": "退出成功",
+	})
 }

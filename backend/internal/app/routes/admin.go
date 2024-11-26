@@ -12,7 +12,7 @@ func RegisterAdminRoutes(api *gin.RouterGroup, handlers *handler.AdminHandlers) 
 		// 认证路由
 		auth := admin.Group("/auth")
 		{
-			auth.POST("/login", handlers.Auth.Login())
+			auth.POST("/login", handlers.Auth.Login)
 			auth.POST("/logout", handlers.Auth.Logout)
 		}
 
