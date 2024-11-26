@@ -7,6 +7,7 @@ import (
 	"github.com/zerokkcoder/indevsca/internal/pkg/response"
 	"github.com/zerokkcoder/indevsca/internal/pkg/utils"
 	"gorm.io/gorm"
+	"github.com/zerokkcoder/indevsca/internal/app/requests/admin"
 )
 
 // AuthHandler 管理员认证处理器
@@ -23,15 +24,9 @@ func NewAuthHandler(authService *service.AuthService, db *gorm.DB) *AuthHandler 
 	}
 }
 
-// LoginRequest 管理员登录请求
-type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 // Login 管理员登录
 func (h *AuthHandler) Login(c *gin.Context) {
-	var req LoginRequest
+	var req admin.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.Error(c, response.ErrInvalidParams)
 		return
