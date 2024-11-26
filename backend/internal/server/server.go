@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/zerokkcoder/indevsca/internal/cache"
 	"github.com/zerokkcoder/indevsca/internal/config"
 	"github.com/zerokkcoder/indevsca/internal/database"
 	"github.com/zerokkcoder/indevsca/internal/logger"
@@ -40,6 +41,9 @@ func (s *Server) init() {
 
 	// 初始化数据库
 	s.db = database.GetInstance()
+
+	// 初始化缓存
+	cache.GetInstance()
 
 	// 运行数据库迁移
 	migrator := database.NewMigrator(s.db.DB())

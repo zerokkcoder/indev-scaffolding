@@ -5,6 +5,7 @@ app:
   debug: true
   jwt_secret: ""
   upload_dir: ./storages/uploads
+  cache:  # redis
 
 database:
   driver: mysql # postgres, mysql, sqlite

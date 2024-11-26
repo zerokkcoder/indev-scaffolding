@@ -9,6 +9,7 @@ type AppConfig struct {
 	Port      int    `mapstructure:"port"`
 	JWTSecret string `mapstructure:"jwt_secret"`
 	UploadDir string `mapstructure:"upload_dir"`
+	Cache     string `mapstructure:"cache"`
 }
 
 func setAppDefaults() {
@@ -18,4 +19,5 @@ func setAppDefaults() {
 	viper.SetDefault("app.debug", false)
 	viper.SetDefault("app.jwt_secret", "")
 	viper.SetDefault("app.upload_dir", "./storages/uploads")
+	viper.SetDefault("app.cache", "redis")
 }
