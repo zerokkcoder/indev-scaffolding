@@ -23,11 +23,6 @@ func (e *CustomError) Error() string {
 	return e.Message
 }
 
-var (
-	ErrInvalidParams      = NewError(40001, "无效的参数")
-	ErrInvalidCredentials = NewError(40101, "用户名或密码错误")
-)
-
 // NewError 创建新的错误
 func NewError(code int, message string) *CustomError {
 	return &CustomError{

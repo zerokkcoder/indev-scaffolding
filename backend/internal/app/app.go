@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/zerokkcoder/indevsca/internal/app/handler"
+	"github.com/zerokkcoder/indevsca/internal/app/middleware"
 	"github.com/zerokkcoder/indevsca/internal/app/routes"
 	"github.com/zerokkcoder/indevsca/internal/infra/config"
 	"gorm.io/gorm"
@@ -31,11 +32,12 @@ func NewApp(
 	app := &App{
 		config:   cfg,
 		handlers: handlers,
-		engine:   gin.Default(),
+		engine:   gin.New(),
 		db:       db,
 	}
 
 	gin.SetMode(cfg.App.Mode)
+	app.setupMiddlewares()
 	app.setupRoutes()
 	app.setupServer()
 	app.seedData() // 添加数据种子
@@ -66,6 +68,14 @@ func (a *App) setupRoutes() {
 	api := a.engine.Group("/api")
 	routes.RegisterAdminRoutes(api, a.handlers.Admin)
 	routes.RegisterMobileRoutes(api, a.handlers.Mobile)
+}
+
+// setupMiddlewares 设置中间件
+func (a *App) setupMiddlewares() {
+	// 全局中间件
+	a.engine.Use(middleware.Logger())    // 日志中间件
+	a.engine.Use(middleware.CORS())      // 跨域中间件
+	a.engine.Use(gin.Recovery())         // panic恢复中间件
 }
 
 // seedData 初始化数据
