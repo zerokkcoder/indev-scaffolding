@@ -74,12 +74,13 @@ func (c *DatabaseConfig) GetSlowThreshold() int {
 }
 
 func setDatabaseDefaults() {
-	viper.SetDefault("database.driver", "postgres")
+	viper.SetDefault("database.driver", "mysql")
 	viper.SetDefault("database.host", "localhost")
-	viper.SetDefault("database.port", 5432)
-	viper.SetDefault("database.username", "postgres")
-	viper.SetDefault("database.password", "postgres")
+	viper.SetDefault("database.port", 3306)
+	viper.SetDefault("database.username", "root")
+	viper.SetDefault("database.password", "123456")
 	viper.SetDefault("database.database", "indever")
+	viper.SetDefault("database.charset", "utf8mb4")
 	viper.SetDefault("database.max_open_conns", 100)
 	viper.SetDefault("database.max_idle_conns", 10)
 	viper.SetDefault("database.conn_max_lifetime", 5*time.Minute)

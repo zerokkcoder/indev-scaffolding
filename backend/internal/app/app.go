@@ -23,20 +23,17 @@ func NewApp(
 	cfg *config.Config,
 	handlers *handler.Handlers,
 ) *App {
+    app := &App{
+        config:   cfg,
+        handlers: handlers,
+        engine:   gin.Default(),
+    }
 
-	gin.SetMode(cfg.App.Mode)
-	engine := gin.Default()
+    gin.SetMode(cfg.App.Mode)
+    app.setupRoutes()
+    app.setupServer()
 
-	app := &App{
-		config:   cfg,
-		engine:   engine,
-		handlers: handlers,
-	}
-
-	app.setupRoutes()
-	app.setupServer()
-
-	return app
+    return app
 }
 
 // setupServer 设置HTTP服务器

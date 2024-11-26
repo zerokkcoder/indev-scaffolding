@@ -2,16 +2,16 @@ package repository
 
 import (
 	"github.com/zerokkcoder/indevsca/internal/domain/entity"
-	"gorm.io/gorm"
+	"github.com/zerokkcoder/indevsca/internal/infra/database"
 )
 
 // UserRepository 用户仓储实现
 type UserRepository struct {
-	db *gorm.DB
+	db *database.Database
 }
 
 // NewUserRepository 创建用户仓储实例
-func NewUserRepository(db *gorm.DB) *UserRepository {
+func NewUserRepository(db *database.Database) *UserRepository {
 	return &UserRepository{
 		db: db,
 	}
@@ -22,18 +22,8 @@ func (r *UserRepository) Create(user *entity.User) error {
 	return r.db.Create(user).Error
 }
 
-// Update 更新用户
-func (r *UserRepository) Update(user *entity.User) error {
-	return r.db.Save(user).Error
-}
-
-// Delete 删除用户
-func (r *UserRepository) Delete(id uint) error {
-	return r.db.Delete(&entity.User{}, id).Error
-}
-
-// FindByID 根据ID查找用户
-func (r *UserRepository) FindByID(id uint) (*entity.User, error) {
+// GetByID 根据ID获取用户
+func (r *UserRepository) GetByID(id uint) (*entity.User, error) {
 	var user entity.User
 	if err := r.db.First(&user, id).Error; err != nil {
 		return nil, err
@@ -41,8 +31,8 @@ func (r *UserRepository) FindByID(id uint) (*entity.User, error) {
 	return &user, nil
 }
 
-// FindByUsername 根据用户名查找用户
-func (r *UserRepository) FindByUsername(username string) (*entity.User, error) {
+// GetByUsername 根据用户名获取用户
+func (r *UserRepository) GetByUsername(username string) (*entity.User, error) {
 	var user entity.User
 	if err := r.db.Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
@@ -57,6 +47,16 @@ func (r *UserRepository) ExistsByUsername(username string) (bool, error) {
 		return false, err
 	}
 	return count > 0, nil
+}
+
+// Update 更新用户
+func (r *UserRepository) Update(user *entity.User) error {
+	return r.db.Save(user).Error
+}
+
+// Delete 删除用户
+func (r *UserRepository) Delete(id uint) error {
+	return r.db.Delete(&entity.User{}, id).Error
 }
 
 // List 获取用户列表

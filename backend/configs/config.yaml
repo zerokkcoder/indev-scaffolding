@@ -5,20 +5,21 @@ app:
   mode: debug # debug, release
   debug: true
   jwt_secret: "kdjckd15664asa"
-  cache: # redis
+  cache: redis # redis
 
 database:
   driver: mysql # postgres, mysql, sqlite
   host: localhost
   port: 3306 
   database: indever
-  user: root  # default 5432 for postgres, 3306 for mysql
-  password: root
+  username: root  # default 5432 for postgres, 3306 for mysql
+  password: ""
+  charset: utf8mb4
 
 redis:
   host: localhost
   port: 6379
-  password: ""
+  password: ""  
   db: 0
 
 log:
