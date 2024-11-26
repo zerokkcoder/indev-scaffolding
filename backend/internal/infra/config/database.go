@@ -84,5 +84,5 @@ func setDatabaseDefaults() {
 	viper.SetDefault("database.max_open_conns", 100)
 	viper.SetDefault("database.max_idle_conns", 10)
 	viper.SetDefault("database.conn_max_lifetime", 5*time.Minute)
-	viper.SetDefault("database.slow_threshold", 200)
+	viper.SetDefault("database.slow_threshold", 800)
 }
