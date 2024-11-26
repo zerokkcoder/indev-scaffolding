@@ -9,6 +9,8 @@ import (
 	"github.com/zerokkcoder/indevsca/internal/app/handler"
 	"github.com/zerokkcoder/indevsca/internal/app/routes"
 	"github.com/zerokkcoder/indevsca/internal/infra/config"
+	"gorm.io/gorm"
+	"github.com/zerokkcoder/indevsca/internal/infra/seed"
 )
 
 // App 应用程序
@@ -17,22 +19,26 @@ type App struct {
 	engine   *gin.Engine
 	handlers *handler.Handlers
 	server   *http.Server
+	db       *gorm.DB
 }
 
 // NewApp 创建应用程序
 func NewApp(
 	cfg *config.Config,
 	handlers *handler.Handlers,
+	db *gorm.DB,
 ) *App {
 	app := &App{
 		config:   cfg,
 		handlers: handlers,
 		engine:   gin.Default(),
+		db:       db,
 	}
 
 	gin.SetMode(cfg.App.Mode)
 	app.setupRoutes()
 	app.setupServer()
+	app.seedData() // 添加数据种子
 
 	return app
 }
@@ -57,5 +63,12 @@ func (a *App) Stop(ctx context.Context) error {
 
 // setupRoutes 设置路由
 func (a *App) setupRoutes() {
-	routes.RegisterRoutes(a.engine, a.handlers)
+	api := a.engine.Group("/api")
+	routes.RegisterAdminRoutes(api, a.handlers.Admin)
+	routes.RegisterMobileRoutes(api, a.handlers.Mobile)
+}
+
+// seedData 初始化数据
+func (a *App) seedData() error {
+	return seed.CreateSuperAdmin(a.db)
 }

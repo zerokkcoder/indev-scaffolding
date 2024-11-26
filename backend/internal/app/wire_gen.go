@@ -24,18 +24,18 @@ func InitializeApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	databaseDatabase, err := database.New(configConfig)
+	db, err := database.New(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	userRepository := repository.NewUserRepository(databaseDatabase)
+	userRepository := repository.NewUserRepository(db)
 	authService := service.NewAuthService(userRepository)
-	authHandler := admin.NewAuthHandler(authService)
+	authHandler := admin.NewAuthHandler(authService, db)
 	userService := service.NewUserService(userRepository)
 	userHandler := admin.NewUserHandler(userService)
 	mobileAuthHandler := mobile.NewAuthHandler(authService)
 	mobileUserHandler := mobile.NewUserHandler(userService)
 	handlers := handler.NewHandlers(authHandler, userHandler, mobileAuthHandler, mobileUserHandler)
-	app := NewApp(configConfig, handlers)
+	app := NewApp(configConfig, handlers, db)
 	return app, nil
 }

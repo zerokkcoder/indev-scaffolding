@@ -2,16 +2,16 @@ package repository
 
 import (
 	"github.com/zerokkcoder/indevsca/internal/domain/entity"
-	"github.com/zerokkcoder/indevsca/internal/infra/database"
+	"gorm.io/gorm"
 )
 
 // UserRepository 用户仓储实现
 type UserRepository struct {
-	db *database.Database
+	db *gorm.DB
 }
 
 // NewUserRepository 创建用户仓储实例
-func NewUserRepository(db *database.Database) *UserRepository {
+func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{
 		db: db,
 	}

@@ -16,7 +16,7 @@ type Database struct {
 }
 
 // New 创建数据库实例
-func New(cfg *config.Config) (*Database, error) {
+func New(cfg *config.Config) (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.Open(cfg.Database.GetDSN()), &gorm.Config{
 		Logger: NewLogger(cfg.App.Debug).LogMode(gormlogger.Info),
 	})
@@ -29,13 +29,14 @@ func New(cfg *config.Config) (*Database, error) {
 		return nil, fmt.Errorf("failed to auto migrate: %w", err)
 	}
 
-	return &Database{DB: db}, nil
+	return db, nil
 }
 
 // autoMigrate 自动迁移数据库结构
 func autoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&entity.User{},
+		&entity.Admin{},
 		// 添加其他需要迁移的模型
 	)
 }
