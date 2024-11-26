@@ -1,0 +1,78 @@
+package repository
+
+import (
+	"github.com/zerokkcoder/indevsca/internal/domain/entity"
+	"gorm.io/gorm"
+)
+
+// UserRepository 用户仓储实现
+type UserRepository struct {
+	db *gorm.DB
+}
+
+// NewUserRepository 创建用户仓储实例
+func NewUserRepository(db *gorm.DB) *UserRepository {
+	return &UserRepository{
+		db: db,
+	}
+}
+
+// Create 创建用户
+func (r *UserRepository) Create(user *entity.User) error {
+	return r.db.Create(user).Error
+}
+
+// Update 更新用户
+func (r *UserRepository) Update(user *entity.User) error {
+	return r.db.Save(user).Error
+}
+
+// Delete 删除用户
+func (r *UserRepository) Delete(id uint) error {
+	return r.db.Delete(&entity.User{}, id).Error
+}
+
+// FindByID 根据ID查找用户
+func (r *UserRepository) FindByID(id uint) (*entity.User, error) {
+	var user entity.User
+	if err := r.db.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// FindByUsername 根据用户名查找用户
+func (r *UserRepository) FindByUsername(username string) (*entity.User, error) {
+	var user entity.User
+	if err := r.db.Where("username = ?", username).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// ExistsByUsername 检查用户名是否存在
+func (r *UserRepository) ExistsByUsername(username string) (bool, error) {
+	var count int64
+	if err := r.db.Model(&entity.User{}).Where("username = ?", username).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+// List 获取用户列表
+func (r *UserRepository) List(offset, limit int) ([]*entity.User, error) {
+	var users []*entity.User
+	if err := r.db.Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+// Count 获取用户总数
+func (r *UserRepository) Count() (int64, error) {
+	var count int64
+	if err := r.db.Model(&entity.User{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
