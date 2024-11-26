@@ -6,13 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Response 标准响应结构
-type Response struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
-}
-
 // CustomError 错误响应
 type CustomError struct {
 	Code    int    `json:"code"`

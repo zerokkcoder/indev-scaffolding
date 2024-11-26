@@ -10,6 +10,7 @@ import (
 	"github.com/zerokkcoder/indevsca/internal/app/middleware"
 	"github.com/zerokkcoder/indevsca/internal/app/routes"
 	"github.com/zerokkcoder/indevsca/internal/infra/config"
+	"github.com/zerokkcoder/indevsca/internal/pkg/validator"
 	"gorm.io/gorm"
 	"github.com/zerokkcoder/indevsca/internal/infra/seed"
 )
@@ -29,6 +30,11 @@ func NewApp(
 	handlers *handler.Handlers,
 	db *gorm.DB,
 ) *App {
+	// 验证配置
+	if err := cfg.Validate(); err != nil {
+		panic(fmt.Sprintf("invalid config: %v", err))
+	}
+
 	app := &App{
 		config:   cfg,
 		handlers: handlers,
@@ -36,7 +42,12 @@ func NewApp(
 		db:       db,
 	}
 
+	// 设置运行模式
 	gin.SetMode(cfg.App.Mode)
+
+	// 初始化验证器
+	validator.Setup()
+
 	app.setupMiddlewares()
 	app.setupRoutes()
 	app.setupServer()
