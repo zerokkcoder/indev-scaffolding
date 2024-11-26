@@ -7,12 +7,13 @@ app:
   upload_dir: ./storages/uploads
 
 database:
-  driver: postgres # postgres, mysql 
+  driver: mysql # postgres, mysql, sqlite
   host: localhost
-  port: 5432 
+  port: 3306 
   database: indever
-  user: postgres  # default 5432 for postgres, 3306 for mysql
-  password: postgres
+  user: root  # default 5432 for postgres, 3306 for mysql
+  password: root
+  log_level: info  # 数据库日志级别：silent, error, warn, info
 
 redis:
   host: localhost

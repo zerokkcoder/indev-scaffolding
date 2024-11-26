@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/zerokkcoder/indevsca/internal/config"
+	"github.com/zerokkcoder/indevsca/internal/database"
 	"github.com/zerokkcoder/indevsca/internal/logger"
 	"github.com/zerokkcoder/indevsca/internal/middlewares"
 )
@@ -21,6 +22,7 @@ var (
 type Server struct {
 	engine *gin.Engine
 	srv    *http.Server
+	db     *database.Database
 }
 
 // GetInstance 获取单例
@@ -35,6 +37,16 @@ func GetInstance() *Server {
 // init 初始化服务器
 func (s *Server) init() {
 	cfg := config.Get()
+
+	// 初始化数据库
+	s.db = database.GetInstance()
+
+	// 运行数据库迁移
+	migrator := database.NewMigrator(s.db.DB())
+	if err := migrator.RunMigrations(); err != nil {
+		logger.Error("数据库迁移失败", "error", err)
+		panic(err)
+	}
 
 	// 设置 gin 模式
 	if cfg.App.Debug {
