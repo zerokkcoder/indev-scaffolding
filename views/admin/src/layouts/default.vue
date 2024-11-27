@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-gray-100 dark:bg-slate-900">
     <!-- 侧边栏 -->
-    <aside class="fixed left-0 top-0 z-40 h-screen bg-white transition-transform duration-300" :class="[isCollapsed ? 'w-14' : 'w-56']">
-      <div class="flex h-16 items-center justify-center border-b px-4">
-        <h1 class="text-xl font-bold truncate" :class="{ 'text-sm': isCollapsed }">{{ isCollapsed ? '后台' : '管理后台' }}</h1>
+    <aside class="fixed left-0 top-0 z-40 h-screen bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 transition-transform duration-300" :class="[isCollapsed ? 'w-14' : 'w-56']">
+      <div class="flex h-16 items-center justify-center border-b border-gray-200 dark:border-slate-800 px-4">
+        <h1 class="text-xl font-bold truncate text-gray-900 dark:text-white" :class="{ 'text-sm': isCollapsed }">{{ isCollapsed ? '后台' : '管理后台' }}</h1>
       </div>
       <nav class="space-y-0.5 py-4" :class="{ 'px-2': isCollapsed, 'px-3': !isCollapsed }">
         <div
@@ -11,9 +11,9 @@
           :key="item.name"
         >
           <div
-            class="flex items-center rounded-lg py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 relative group cursor-pointer"
+            class="flex items-center rounded-lg py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 relative group cursor-pointer"
             :class="{
-              'bg-gray-100': item.children ? layoutStore.activeParentMenu === item.name : layoutStore.currentPath === item.path,
+              'bg-gray-100 dark:bg-slate-800': item.children ? layoutStore.activeParentMenu === item.name : layoutStore.currentPath === item.path,
               'text-blue-600': layoutStore.activeParentMenu === item.name,
               'justify-center px-2': isCollapsed,
               'px-3': !isCollapsed
@@ -23,15 +23,15 @@
             <component :is="item.icon" class="h-4 w-4" :class="{ 'mr-2': !isCollapsed }" />
             <span v-if="!isCollapsed" class="text-sm">
               {{ item.name }}
-              <span v-if="item.children" class="ml-1 text-gray-400 text-xs">({{ item.children.length }})</span>
+              <span v-if="item.children" class="ml-1 text-gray-400 dark:text-gray-500 text-xs">({{ item.children.length }})</span>
             </span>
             <!-- 悬浮提示 -->
             <div
               v-if="isCollapsed"
-              class="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded invisible group-hover:visible whitespace-nowrap z-50"
+              class="absolute left-full ml-2 px-2 py-1 bg-gray-800 dark:bg-slate-800 text-white text-xs rounded invisible group-hover:visible whitespace-nowrap z-50"
             >
               {{ item.name }}
-              <span v-if="item.children" class="ml-1 text-gray-400">({{ item.children.length }})</span>
+              <span v-if="item.children" class="ml-1 text-gray-400 dark:text-gray-500">({{ item.children.length }})</span>
             </div>
           </div>
         </div>
@@ -41,40 +41,50 @@
     <!-- 主要内容区域 -->
     <div :class="[isCollapsed ? 'pl-14' : 'pl-56']" class="transition-[padding] duration-300">
       <!-- 顶部导航栏 -->
-      <header class="fixed top-0 right-0 z-20 h-16 bg-white border-b flex items-center justify-between px-6"
+      <header class="fixed top-0 right-0 z-20 h-16 bg-white dark:bg-slate-900 border-b flex items-center justify-between px-6"
         :class="[isCollapsed ? 'left-14' : 'left-56']">
         <div class="flex items-center">
-          <button class="rounded-lg p-2 hover:bg-gray-100" @click="layoutStore.toggleSidebar">
-            <Menu class="h-5 w-5" />
+          <button class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-slate-800" @click="layoutStore.toggleSidebar">
+            <Menu class="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
+        
         <div class="flex items-center space-x-4">
-          <button class="rounded-lg p-2 hover:bg-gray-100">
-            <Bell class="h-5 w-5" />
+          <!-- 深色模式切换 -->
+          <button 
+            class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-slate-800"
+            @click="themeStore.toggleTheme"
+          >
+            <Sun v-if="themeStore.theme === 'dark'" class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+            <Moon v-else class="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
-          <button class="rounded-lg p-2 hover:bg-gray-100">
-            <User class="h-5 w-5" />
+
+          <button class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-slate-800">
+            <Bell class="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          </button>
+          <button class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-slate-800">
+            <User class="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
       </header>
 
       <!-- 页面内容 -->
-      <main class="pt-16 min-h-screen bg-gray-100">
+      <main class="pt-16 min-h-screen bg-gray-100 dark:bg-slate-900">
         <div class="flex min-h-[calc(100vh-4rem)]">
           <!-- 二级菜单 -->
           <div
             v-show="showSubmenu"
-            class="w-40 bg-white border-r border-l border-gray-200 transition-all duration-300 min-h-full"
+            class="w-40 bg-white dark:bg-slate-900 border-r border-l border-gray-200 dark:border-slate-800 transition-all duration-300 min-h-full"
           >
             <div class="sticky top-0 p-3">
-              <h2 class="text-sm font-medium text-gray-500 mb-3">{{ activeParentMenu }}</h2>
+              <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{{ activeParentMenu }}</h2>
               <nav class="space-y-0.5">
                 <router-link
                   v-for="subItem in currentSubmenuItems"
                   :key="subItem.path"
                   :to="subItem.path!"
-                  class="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-                  :class="{ 'bg-gray-100': layoutStore.isCurrentRoute(subItem.path!) }"
+                  class="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800"
+                  :class="{ 'bg-gray-100 dark:bg-slate-800': layoutStore.isCurrentRoute(subItem.path!) }"
                 >
                   <component :is="subItem.icon" class="h-3.5 w-3.5 mr-2" />
                   {{ subItem.name }}
@@ -108,14 +118,18 @@ import {
   Shield,
   Box,
   Mail,
-  MessageSquare
+  MessageSquare,
+  Sun,
+  Moon
 } from 'lucide-vue-next'
 import { useLayoutStore } from '@/stores/layout'
+import { useThemeStore } from '@/stores/theme'
 import type { MenuItem } from '@/types'
 
 const router = useRouter()
 const route = useRoute()
 const layoutStore = useLayoutStore()
+const themeStore = useThemeStore()
 
 const isCollapsed = computed(() => layoutStore.isCollapsed)
 const activeParentMenu = computed(() => layoutStore.activeParentMenu)
