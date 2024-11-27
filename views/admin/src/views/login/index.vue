@@ -3,38 +3,38 @@
     <Card class="w-full max-w-md">
       <form @submit.prevent="handleSubmit" class="space-y-6 p-6">
         <div class="text-center">
-          <h1 class="text-2xl font-bold">Admin Login</h1>
-          <p class="mt-2 text-sm text-gray-600">Please sign in to continue</p>
+          <h1 class="text-2xl font-bold">管理员登录</h1>
+          <p class="mt-2 text-sm text-gray-600">请登录以继续</p>
         </div>
 
         <div class="space-y-4">
           <div class="space-y-2">
-            <label class="text-sm font-medium" for="username">Username</label>
+            <label class="text-sm font-medium" for="username">用户名</label>
             <Input
               id="username"
               v-model="formData.username"
               :variant="errors.username ? 'error' : 'default'"
-              placeholder="Enter your username"
+              placeholder="请输入用户名"
               type="text"
             />
             <p v-if="errors.username" class="text-sm text-red-500">{{ errors.username }}</p>
           </div>
 
           <div class="space-y-2">
-            <label class="text-sm font-medium" for="password">Password</label>
+            <label class="text-sm font-medium" for="password">密码</label>
             <Input
               id="password"
               v-model="formData.password"
               type="password"
               :variant="errors.password ? 'error' : 'default'"
-              placeholder="Enter your password"
+              placeholder="请输入密码"
             />
             <p v-if="errors.password" class="text-sm text-red-500">{{ errors.password }}</p>
           </div>
         </div>
 
         <Button type="submit" class="w-full" :disabled="isLoading">
-          {{ isLoading ? 'Signing in...' : 'Sign in' }}
+          {{ isLoading ? '登录中...' : '登录' }}
         </Button>
 
         <p v-if="loginError" class="text-center text-sm text-red-500">{{ loginError }}</p>
@@ -82,12 +82,12 @@ const validateForm = () => {
   errors.value.password = ''
 
   if (!formData.value.username.trim()) {
-    errors.value.username = 'Username is required'
+    errors.value.username = '请输入用户名'
     isValid = false
   }
 
   if (!formData.value.password.trim()) {
-    errors.value.password = 'Password is required'
+    errors.value.password = '请输入密码'
     isValid = false
   }
 
@@ -106,7 +106,7 @@ const handleSubmit = async () => {
     await userStore.login(formData.value.username.trim(), formData.value.password.trim())
     router.push('/dashboard')
   } catch (error: any) {
-    loginError.value = error.message || 'Login failed'
+    loginError.value = error.message || '登录失败'
   } finally {
     isLoading.value = false
   }
