@@ -34,7 +34,7 @@
       <!-- 顶部导航栏 -->
       <header class="flex h-16 items-center justify-between border-b bg-white px-6">
         <div class="flex items-center">
-          <button class="rounded-lg p-2 hover:bg-gray-100" @click="toggleSidebar">
+          <button class="rounded-lg p-2 hover:bg-gray-100" @click="layoutStore.toggleSidebar">
             <Menu class="h-5 w-5" />
           </button>
         </div>
@@ -57,16 +57,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { LayoutDashboard, Users, Settings, Menu, Bell, User } from 'lucide-vue-next'
+import { useLayoutStore } from '../stores/layout'
+import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
 
 const route = useRoute()
-const isCollapsed = ref(false)
-
-const toggleSidebar = () => {
-  isCollapsed.value = !isCollapsed.value
-}
+const layoutStore = useLayoutStore()
+const { isCollapsed } = storeToRefs(layoutStore)
 
 const menuItems = ref([
   {
