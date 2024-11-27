@@ -1,28 +1,22 @@
 package admin
 
 import (
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/zerokkcoder/indevsca/internal/app/requests/admin"
-	"github.com/zerokkcoder/indevsca/internal/domain/entity"
-	"github.com/zerokkcoder/indevsca/internal/domain/service"
+	adminService "github.com/zerokkcoder/indevsca/internal/domain/service/admin"
 	"github.com/zerokkcoder/indevsca/internal/pkg/response"
-	"github.com/zerokkcoder/indevsca/internal/pkg/utils"
 	"gorm.io/gorm"
 )
 
 // AuthHandler 管理员认证处理器
 type AuthHandler struct {
-	authService *service.AuthService
-	db          *gorm.DB
+	authService *adminService.AuthService
 }
 
 // NewAuthHandler 创建管理员认证处理器
-func NewAuthHandler(authService *service.AuthService, db *gorm.DB) *AuthHandler {
+func NewAuthHandler(db *gorm.DB) *AuthHandler {
 	return &AuthHandler{
-		authService: authService,
-		db:          db,
+		authService: adminService.NewAuthService(db),
 	}
 }
 
@@ -34,32 +28,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	var admin entity.Admin
-	if err := h.db.Where("username = ?", req.Username).First(&admin).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			response.Error(c, response.ErrInvalidCredentials)
-			return
-		}
-		response.Error(c, err)
-		return
-	}
-
-	// 验证密码
-	if !utils.CheckPasswordHash(req.Password, admin.Password) {
-		response.Error(c, response.ErrInvalidCredentials)
-		return
-	}
-
-	// 生成JWT token
-	token, err := utils.GenerateToken(admin.ID)
+	token, admin, err := h.authService.Login(req.Username, req.Password)
 	if err != nil {
 		response.Error(c, err)
 		return
 	}
-
-	// 更新最后登录时间
-	admin.LastLogin = time.Now()
-	h.db.Save(&admin)
 
 	response.Success(c, gin.H{
 		"token": token,
