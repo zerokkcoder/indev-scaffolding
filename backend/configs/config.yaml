@@ -13,7 +13,7 @@ database:
   port: 3306 
   database: indever
   username: root  # default 5432 for postgres, 3306 for mysql
-  password: ""
+  password: root
   charset: utf8mb4
 
 redis:
