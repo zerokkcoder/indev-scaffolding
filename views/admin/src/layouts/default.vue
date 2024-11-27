@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-100 dark:bg-slate-900">
     <!-- 侧边栏 -->
-    <aside class="fixed left-0 top-0 z-40 h-screen bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 transition-transform duration-300" :class="[isCollapsed ? 'w-14' : 'w-56']">
+    <aside class="fixed left-0 top-0 z-40 h-screen bg-white border-r dark:bg-slate-900 border-gray-200 dark:border-slate-800 transition-transform duration-300" :class="[isCollapsed ? 'w-14' : 'w-48']">
       <div class="flex h-16 items-center justify-center border-b border-gray-200 dark:border-slate-800 px-4">
         <h1 class="text-xl font-bold truncate text-gray-900 dark:text-white" :class="{ 'text-sm': isCollapsed }">{{ isCollapsed ? '后台' : '管理后台' }}</h1>
       </div>
@@ -39,10 +39,10 @@
     </aside>
 
     <!-- 主要内容区域 -->
-    <div :class="[isCollapsed ? 'pl-14' : 'pl-56']" class="transition-[padding] duration-300">
+    <div :class="[isCollapsed ? 'pl-14' : 'pl-48']" class="transition-[padding] duration-300">
       <!-- 顶部导航栏 -->
       <header class="fixed top-0 right-0 z-20 h-16 bg-white dark:bg-slate-900 border-b flex items-center justify-between px-6"
-        :class="[isCollapsed ? 'left-14' : 'left-56']">
+        :class="[isCollapsed ? 'left-14' : 'left-48']">
         <div class="flex items-center">
           <button class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-slate-800" @click="layoutStore.toggleSidebar">
             <Menu class="h-5 w-5 text-gray-500 dark:text-gray-400" />
@@ -74,7 +74,7 @@
           <!-- 二级菜单 -->
           <div
             v-show="showSubmenu"
-            class="w-40 bg-white dark:bg-slate-900 border-r border-l border-gray-200 dark:border-slate-800 transition-all duration-300 min-h-full"
+            class="w-40 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 transition-[width] duration-300 min-h-full"
           >
             <div class="sticky top-0 p-3">
               <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{{ activeParentMenu }}</h2>
@@ -83,7 +83,7 @@
                   v-for="subItem in currentSubmenuItems"
                   :key="subItem.path"
                   :to="subItem.path!"
-                  class="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800"
+                  class="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors duration-150"
                   :class="{ 'bg-gray-100 dark:bg-slate-800': layoutStore.isCurrentRoute(subItem.path!) }"
                 >
                   <component :is="subItem.icon" class="h-3.5 w-3.5 mr-2" />
