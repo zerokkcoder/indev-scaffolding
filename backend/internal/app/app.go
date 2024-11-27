@@ -30,6 +30,16 @@ func NewApp(
 	handlers *handler.Handlers,
 	db *gorm.DB,
 ) *App {
+	if cfg == nil {
+		panic("config is required")
+	}
+	if handlers == nil {
+		panic("handlers is required")
+	}
+	if db == nil {
+		panic("database is required")
+	}
+
 	// 验证配置
 	if err := cfg.Validate(); err != nil {
 		panic(fmt.Sprintf("invalid config: %v", err))
@@ -51,13 +61,22 @@ func NewApp(
 	app.setupMiddlewares()
 	app.setupRoutes()
 	app.setupServer()
-	app.seedData() // 添加数据种子
+	if err := app.seedData(); err != nil {
+		panic(fmt.Sprintf("failed to seed data: %v", err))
+	}
 
 	return app
 }
 
 // setupServer 设置HTTP服务器
 func (a *App) setupServer() {
+	if a.config == nil {
+		panic("config is not initialized")
+	}
+	if a.engine == nil {
+		panic("engine is not initialized")
+	}
+
 	a.server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", a.config.App.Port),
 		Handler: a.engine,
@@ -66,16 +85,29 @@ func (a *App) setupServer() {
 
 // Start 启动应用
 func (a *App) Start() error {
+	if a.server == nil {
+		return fmt.Errorf("server is not initialized")
+	}
 	return a.server.ListenAndServe()
 }
 
 // Stop 优雅关闭
 func (a *App) Stop(ctx context.Context) error {
+	if a.server == nil {
+		return nil
+	}
 	return a.server.Shutdown(ctx)
 }
 
 // setupRoutes 设置路由
 func (a *App) setupRoutes() {
+	if a.engine == nil {
+		panic("engine is not initialized")
+	}
+	if a.handlers == nil {
+		panic("handlers is not initialized")
+	}
+
 	api := a.engine.Group("/api")
 	routes.RegisterAdminRoutes(api, a.handlers.Admin)
 	routes.RegisterMobileRoutes(api, a.handlers.Mobile)
@@ -83,6 +115,10 @@ func (a *App) setupRoutes() {
 
 // setupMiddlewares 设置中间件
 func (a *App) setupMiddlewares() {
+	if a.engine == nil {
+		panic("engine is not initialized")
+	}
+
 	// 全局中间件
 	a.engine.Use(middleware.Logger())    // 日志中间件
 	a.engine.Use(middleware.CORS())      // 跨域中间件
@@ -91,5 +127,8 @@ func (a *App) setupMiddlewares() {
 
 // seedData 初始化数据
 func (a *App) seedData() error {
+	if a.db == nil {
+		return fmt.Errorf("database is not initialized")
+	}
 	return seed.CreateSuperAdmin(a.db)
 }

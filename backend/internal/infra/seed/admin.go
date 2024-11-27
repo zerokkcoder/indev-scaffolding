@@ -1,6 +1,8 @@
 package seed
 
 import (
+	"time"
+
 	"github.com/zerokkcoder/indevsca/internal/domain/entity"
 	"github.com/zerokkcoder/indevsca/internal/pkg/utils"
 
@@ -25,6 +27,11 @@ func CreateSuperAdmin(db *gorm.DB) error {
 		return err
 	}
 	admin.Password = hashedPassword
+
+	// 设置默认头像
+	admin.Avatar = "https://ui-avatars.com/api/?name=Admin&background=random&color=fff&length=2&font-size=0.33&rounded=true"
+	admin.LastLogin = time.Now()
+	admin.LoginIP = "127.0.0.1"
 
 	// 创建超级管理员
 	return db.Create(admin).Error
