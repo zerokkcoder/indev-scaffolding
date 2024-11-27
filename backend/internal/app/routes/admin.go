@@ -19,10 +19,9 @@ func RegisterAdminRoutes(api *gin.RouterGroup, handlers *handler.AdminHandlers) 
 		// 用户管理路由
 		users := admin.Group("/users")
 		{
-			users.GET("", handlers.User.List)         // 获取用户列表
-			users.POST("", handlers.User.Create)      // 创建用户
-			users.PUT("/:id", handlers.User.Update)   // 更新用户
-			users.DELETE("/:id", handlers.User.Delete) // 删除用户
+			users.GET("", handlers.User.List)                 // 获取用户列表
+			users.PUT("/:id", handlers.User.Update)           // 更新用户
+			users.DELETE("/:id", handlers.User.Delete)        // 删除用户
 			users.POST("/:id/enable", handlers.User.Enable)   // 启用用户
 			users.POST("/:id/disable", handlers.User.Disable) // 禁用用户
 		}
