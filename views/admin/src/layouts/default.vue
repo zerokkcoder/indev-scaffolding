@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <!-- 侧边栏 -->
-    <aside class="fixed left-0 top-0 z-40 h-screen w-64 bg-white shadow-sm">
+    <aside class="fixed left-0 top-0 z-40 h-screen bg-white transition-transform duration-300" :class="[isCollapsed ? '-translate-x-full' : '', 'w-64']">
       <div class="flex h-16 items-center justify-center border-b px-4">
         <h1 class="text-xl font-bold">Admin Panel</h1>
       </div>
@@ -20,11 +20,11 @@
     </aside>
 
     <!-- 主要内容区域 -->
-    <div class="pl-64">
+    <div :class="[isCollapsed ? 'pl-0' : 'pl-64']" class="transition-[padding] duration-300">
       <!-- 顶部导航栏 -->
       <header class="flex h-16 items-center justify-between border-b bg-white px-6">
         <div class="flex items-center">
-          <button class="rounded-lg p-2 hover:bg-gray-100">
+          <button class="rounded-lg p-2 hover:bg-gray-100" @click="toggleSidebar">
             <Menu class="h-5 w-5" />
           </button>
         </div>
@@ -52,6 +52,11 @@ import { useRoute } from 'vue-router'
 import { LayoutDashboard, Users, Settings, Menu, Bell, User } from 'lucide-vue-next'
 
 const route = useRoute()
+const isCollapsed = ref(false)
+
+const toggleSidebar = () => {
+  isCollapsed.value = !isCollapsed.value
+}
 
 const menuItems = ref([
   {
