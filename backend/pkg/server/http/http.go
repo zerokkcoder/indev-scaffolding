@@ -62,7 +62,7 @@ func (s *Server) Stop(ctx context.Context) error {
 	defer cancel()
 
 	if err := s.httpSrv.Shutdown(ctx); err != nil {
-		s.logger.ErrorContext(ctx, "Server forced to shutdown: ", err.Error())
+		s.logger.ErrorContext(ctx, "Server forced to shutdown: ", "err:", err.Error())
 	}
 	s.logger.InfoContext(ctx, "Server exiting")
 	return nil

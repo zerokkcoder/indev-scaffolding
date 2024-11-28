@@ -43,10 +43,10 @@ func WithServerPort(port int) Option {
 func (s *Server) Start(ctx context.Context) error {
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", s.host, s.port))
 	if err != nil {
-		s.logger.ErrorContext(ctx, "Failed to listen: %v", err)
+		s.logger.ErrorContext(ctx, "Failed to listen", "err:", err.Error())
 	}
 	if err = s.Server.Serve(lis); err != nil {
-		s.logger.ErrorContext(ctx, "Failed to serve: %v", err)
+		s.logger.ErrorContext(ctx, "Failed to serve", "err:", err.Error())
 	}
 	return nil
 
