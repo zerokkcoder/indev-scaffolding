@@ -2,62 +2,33 @@ package main
 
 import (
 	"context"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+	"flag"
+	"fmt"
 
-	"github.com/zerokkcoder/indevsca/internal/app"
-	"github.com/zerokkcoder/indevsca/internal/infra/config"
-	"github.com/zerokkcoder/indevsca/internal/infra/logger"
+	"github.com/zerokkcoder/indevsca/cmd/server/wire"
+	"github.com/zerokkcoder/indevsca/pkg/config"
+	"github.com/zerokkcoder/indevsca/pkg/log"
 )
 
 func main() {
-	// 加载配置
-	if _, err := config.LoadConfig(); err != nil {
-		log.Fatalf("Failed to load config: %v", err)
-	}
-
-	// 初始化日志
-	if err := logger.Init(); err != nil {
-		log.Fatalf("Failed to initialize logger: %v", err)
-	}
-
-	// 初始化应用
-	application, err := app.InitializeApp()
+	// 初始化配置
+	var envConf = flag.String("conf", "config/local.yml", "config path, eg: -conf ./config/local.yml")
+	flag.Parse()
+	conf, err := config.NewConfig(*envConf)
 	if err != nil {
-		logger.Fatal("Failed to initialize application", "error", err)
-		return // 确保在初始化失败时退出
+		panic(err)
+	}
+	// 初始化日志
+	logger := log.NewLogger(conf)
+	app, cleanup, err := wire.NewWire(conf, logger)
+	defer cleanup()
+	if err != nil {
+		panic(err)
+	}
+	logger.Info("server start", "host", fmt.Sprintf("http://%v:%d", conf.App.Host, conf.App.Port))
+	// 启动服务器
+	if err := app.Run(context.Background()); err != nil {
+		panic(err)
 	}
 
-	// 启动应用
-	errChan := make(chan error, 1)
-	go func() {
-		logger.Info("Starting server")
-		if err := application.Start(); err != nil {
-			errChan <- err
-		}
-	}()
-
-	// 等待中断信号或错误
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
-	select {
-	case err := <-errChan:
-		logger.Error("Server failed", "error", err)
-	case <-quit:
-		logger.Info("Shutting down server...")
-
-		// 优雅关闭服务器（5秒超时）
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		if err := application.Stop(ctx); err != nil {
-			logger.Error("Server forced to shutdown", "error", err)
-		}
-
-		logger.Info("Server exited")
-	}
 }

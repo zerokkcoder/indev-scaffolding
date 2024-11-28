@@ -1,0 +1,27 @@
+app:
+  name: Indever
+  host: 0.0.0.0
+  port: 8090
+  mode: debug # debug, release
+  jwt_secret: "kdjckd15664asa"
+  cache: redis # redis
+
+database:
+  driver: mysql # postgres, mysql, sqlite
+  host: localhost
+  port: 3306 
+  database: indever
+  username: root  # default 5432 for postgres, 3306 for mysql
+  password: 
+  charset: utf8mb4
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""  
+  db: 0
+
+log:
+  level: info
+  output: file # stdout, file
+  dir: ./storage/logs
